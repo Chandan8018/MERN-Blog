@@ -16,18 +16,18 @@ export default function Header() {
         type='text' 
         placeholder='Search...'
         rightIcon={FcSearch}
-        className='hidden lg:inline'
+        className='hidden lg:inline text-2xl'
         />
       </form>
       <Button className='w-12 h-10 lg:hidden' color='gray' pill>
-        <FcSearch/>
+        <FcSearch className='text-2xl'/>
       </Button>
       <div className='flex gap-2 md:order-2'>
         <Button className='w-12 h-10 hidden sm:inline' color='gray' pill>
          <FaMoon/>
         </Button>
         <Link to='/sign-in'>
-          <Button gradientDuoTone='purpleToBlue' color='gray' pill>
+          <Button gradientDuoTone='purpleToBlue' color='gray' pill outline>
          Sign In
         </Button>
         </Link>
