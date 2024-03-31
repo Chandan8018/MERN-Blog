@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 mongoose
-.connect( process.env.MONGO /* npm i dotenv */)
+.connect( process.env.MONGO )
 .then(
   () => {console.log('mongodb is connected..');}
 )
