@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 export default function Header() {
   const path = useLocation().pathname;
   return (
-    <Navbar>
+    <Navbar className="border-b-gray-100 border-b-2">
       <Link
         to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
