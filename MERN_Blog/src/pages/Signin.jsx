@@ -1,14 +1,25 @@
-import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { MdEmail } from "react-icons/md";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 
 export default function Signin() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const userState = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { loading, error: errorMessage } = userState || {
+    loading: false,
+    error: null,
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -18,13 +29,11 @@ export default function Signin() {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      return setErrorMessage("Please fill out all fields");
+      return dispatch(signInFailure("Please fill out all fields"));
     }
 
     try {
-      setLoading(true);
-
-      setErrorMessage(null);
+      dispatch(signInStart());
 
       const res = await fetch("/api/auth/signin", {
         method: "POST",
@@ -34,19 +43,17 @@ export default function Signin() {
 
       const data = await res.json();
 
-      if(data.success === false){
-        setErrorMessage(data.message)
+      if (data.success === false) {
+        //setErrorMessage(data.message)
+        dispatch(signInFailure(data.message));
       }
 
-      setLoading(false);
-
-      if(res.ok){
-        navigate('/');
+      if (res.ok) {
+        dispatch(signInSuccess(data));
+        navigate("/");
       }
-      
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
   return (
@@ -61,7 +68,7 @@ export default function Signin() {
             Blog
           </Link>
           <p className="text-sm mt-5">
-            You can sign up with your email and password or with Google.
+            You can sign in with your email and password or with Google.
           </p>
         </div>
 
@@ -73,7 +80,7 @@ export default function Signin() {
                 {errorMessage}
               </Alert>
             )}
-            
+
             <Label value="Your email" />
             <TextInput
               type="email"
@@ -92,13 +99,19 @@ export default function Signin() {
               onChange={handleChange}
             />
 
-            <Button type="submit" gradientDuoTone="purpleToPink" disabled={loading}>
-             {loading ? (
-              <>
-                <Spinner size='sm' />
-                <span className="pl-3">Loading...</span>
-              </>
-             ) : ('Sign In')}
+            <Button
+              type="submit"
+              gradientDuoTone="purpleToPink"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
           <div className="flex gap-2 text-sm mt-5">
