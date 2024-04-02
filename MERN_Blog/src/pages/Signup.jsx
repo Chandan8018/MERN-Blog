@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { MdEmail } from "react-icons/md";
+import OAuth from "../components/OAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
@@ -35,14 +36,14 @@ export default function Signup() {
 
       const data = await res.json();
 
-      if(data.success === false){
-        setErrorMessage(data.message)
+      if (data.success === false) {
+        setErrorMessage(data.message);
       }
 
       setLoading(false);
-      
-      if(res.ok){
-        navigate('/sign-in');
+
+      if (res.ok) {
+        navigate("/sign-in");
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -101,14 +102,21 @@ export default function Signup() {
               onChange={handleChange}
             />
 
-            <Button type="submit" gradientDuoTone="purpleToPink" disabled={loading}>
-            {loading ? (
-              <>
-                <Spinner size='sm' />
-                <span className="pl-3">Loading...</span>
-              </>
-            ) : ('Sign Up')}
+            <Button
+              type="submit"
+              gradientDuoTone="purpleToPink"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
+              ) : (
+                "Sign Up"
+              )}
             </Button>
+            <OAuth />
           </form>
 
           <div className="flex gap-2 text-sm mt-5">
@@ -117,7 +125,6 @@ export default function Signup() {
               Sign In
             </Link>
           </div>
-          
         </div>
       </div>
     </div>
