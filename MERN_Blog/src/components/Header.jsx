@@ -1,10 +1,16 @@
 import React from "react";
-import { Button, Navbar, TextInput } from "flowbite-react";
+import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { FcSearch } from "react-icons/fc";
 import { FaMoon } from "react-icons/fa";
+import { FaUserCheck, FaSignOutAlt } from "react-icons/fa";
+import { ImProfile } from "react-icons/im";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 export default function Header() {
   const path = useLocation().pathname;
+  const { currentUser } = useSelector((state) => state.user);
+
   return (
     <Navbar className="border-b-gray-100 border-b-2">
       <Link
@@ -31,11 +37,48 @@ export default function Header() {
         <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
           <FaMoon />
         </Button>
-        <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToBlue" color="gray" pill outline>
-            Sign In
-          </Button>
-        </Link>
+        {currentUser ? (
+          <>
+            <Dropdown
+              arrowIcon={false}
+              inline
+              label={
+                <Avatar alt="user" img={currentUser.profilePicture} rounded />
+              }
+            >
+              <Dropdown.Header>
+                <FaUserCheck className="w-10 h-10" color="navy" />
+
+                <span className="block text-md font-bold text-black truncate">
+                  @{currentUser.username}
+                </span>
+                <span className="block text-sm font-medium text-black truncate">
+                  {currentUser.email}
+                </span>
+              </Dropdown.Header>
+
+              <Link to="/dashboard?tab=profile">
+                <Dropdown.Item className="text-blue-500 font-semibold">
+                  <ImProfile className="w-4 h-4 mr-2" color="blue" />
+                  Profile
+                </Dropdown.Item>
+              </Link>
+
+              <Dropdown.Divider />
+
+              <Dropdown.Item className="text-red-500 font-semibold">
+                <FaSignOutAlt className="w-4 h-4 mr-2" color="red" />
+                Sign out
+              </Dropdown.Item>
+            </Dropdown>
+          </>
+        ) : (
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" color="gray" pill outline>
+              Sign In
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </div>
 
