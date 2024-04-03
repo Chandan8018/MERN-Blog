@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import userRouters from "./routes/user.route.js";
 import authRouters from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
+
 dotenv.config();
 
 mongoose
@@ -16,7 +18,10 @@ mongoose
   });
 
 const app = express();
-app.use(bodyParser.json());
+
+app.use(express.json());
+app.use(cookieParser());
+
 app.listen(3000, () => {
   console.log("Server running on port number 3000");
 });
