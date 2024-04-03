@@ -22,6 +22,7 @@ export default function DashSideBar() {
               icon={HiUser}
               label={"User"}
               className="cursor-pointer"
+              as="div"
             >
               Profile
             </Sidebar.Item>
