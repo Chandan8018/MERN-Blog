@@ -7,6 +7,7 @@ import { ImProfile } from "react-icons/im";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { signoutSuccess } from "../redux/user/userSlice";
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -14,6 +15,22 @@ export default function Header() {
   const dispatch = useDispatch();
   const themeState = useSelector((state) => state.theme);
   const { theme } = themeState;
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <Navbar className="border-b-gray-100 border-b-2">
@@ -76,7 +93,10 @@ export default function Header() {
 
                 <Dropdown.Divider />
 
-                <Dropdown.Item className="text-red-500 font-semibold">
+                <Dropdown.Item
+                  className="text-red-500 font-semibold"
+                  onClick={handleSignout}
+                >
                   <FaSignOutAlt className="w-4 h-4 mr-2" color="red" />
                   Sign out
                 </Dropdown.Item>
@@ -116,7 +136,10 @@ export default function Header() {
 
                 <Dropdown.Divider />
 
-                <Dropdown.Item className="text-red-500 font-semibold">
+                <Dropdown.Item
+                  className="text-red-500 font-semibold"
+                  onClick={handleSignout}
+                >
                   <FaSignOutAlt className="w-4 h-4 mr-2" color="red" />
                   Sign out
                 </Dropdown.Item>
