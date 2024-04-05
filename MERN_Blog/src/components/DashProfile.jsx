@@ -36,12 +36,13 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  console.log(imageFileUrl);
+
   const handleImageChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setImageFile(selectedFile);
       setImageFileUrl(URL.createObjectURL(selectedFile));
+      console.log(URL.createObjectURL(selectedFile));
     }
   };
   useEffect(() => {
