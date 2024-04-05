@@ -8,7 +8,7 @@ const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "thingbig-blog.firebaseapp.com",
   projectId: "thingbig-blog",
-  storageBucket: "thingbig-blog.appspot.com",
+  storageBucket: "gs://thingbig-blog.appspot.com",
   messagingSenderId: "521650931712",
   appId: "1:521650931712:web:1e3a24c064ee4a45f4b0e5",
 };
