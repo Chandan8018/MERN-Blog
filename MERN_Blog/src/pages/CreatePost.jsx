@@ -11,22 +11,25 @@ import {
 import { app } from "../firebase.js";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setimageUploadError] = useState(null);
-  const [formData, setFormData] = useState({ image: null });
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [publishError, setPublishError] = useState(null);
+  const navigate = useNavigate();
 
   const handleUploadImage = async () => {
     try {
       if (!file) {
-        setimageUploadError("Please select an image to upload");
+        setImageUploadError("Please select an image");
         return;
       }
-      setimageUploadError(null);
+      setImageUploadError(null);
       const storage = getStorage(app);
-      const fileName = new Date().getTime() + file.name;
+      const fileName = new Date().getTime() + "-" + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
@@ -37,30 +40,54 @@ export default function CreatePost() {
           setImageUploadProgress(progress.toFixed(0));
         },
         (error) => {
-          setimageUploadError("Image upload failed. Please try again1.");
+          setImageUploadError("Image upload failed");
           setImageUploadProgress(null);
         },
-
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImageUploadProgress(null);
-            setimageUploadError(null);
+            setImageUploadError(null);
             setFormData({ ...formData, image: downloadURL });
           });
         }
       );
     } catch (error) {
-      setimageUploadError("Image upload failed. Please try again2.");
+      setImageUploadError("Image upload failed");
       setImageUploadProgress(null);
       console.log(error);
     }
   };
+  const handleUploadSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+
+      if (res.ok) {
+        setPublishError(null);
+        navigate(`/post/${data.slug}`);
+      }
+    } catch (error) {
+      setPublishError("Something went wrong last", error);
+    }
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto  ">
       <h1 className="text-3xl font-bold text-center my-7 dark:text-white">
         Create a Post
       </h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleUploadSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             id="title"
@@ -68,9 +95,16 @@ export default function CreatePost() {
             placeholder="Post Title"
             required
             className="flex-1 font-bold"
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
           />
-          <Select>
-            <option value="unselected">Select a catagory</option>
+          <Select
+            onChange={(e) =>
+              setFormData({ ...formData, catagory: e.target.value })
+            }
+          >
+            <option value="uncategorized">Select a catagory</option>
             <option value="Health">Health</option>
             <option value="Technology">Technology</option>
             <option value="Business">Business</option>
@@ -128,11 +162,17 @@ export default function CreatePost() {
             placeholder="Write something..."
             className="h-full dark:text-white "
             required
+            onChange={(e) => setFormData({ ...formData, content: e })}
           />
         </div>
         <Button type="submit" gradientDuoTone="pinkToOrange" className="my-10">
           Publish
         </Button>
+        {publishError && (
+          <Alert className="my-5" color="failure">
+            {publishError}
+          </Alert>
+        )}
       </form>
     </div>
   );

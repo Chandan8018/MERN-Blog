@@ -5,22 +5,22 @@ const postSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: true,
-      unique: true,
     },
     content: {
       type: String,
       required: true,
     },
-    photo: {
+    title: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    image: {
       type: String,
       default:
         "https://img.freepik.com/premium-vector/product-release-business-concept_198530-878.jpg",
     },
-    titel: {
-      type: String,
-      required: true,
-    },
-    catagory: {
+    category: {
       type: String,
       default: "uncategorized",
     },
@@ -34,4 +34,5 @@ const postSchema = new mongoose.Schema(
 );
 
 const Post = mongoose.model("Post", postSchema);
+
 export default Post;
